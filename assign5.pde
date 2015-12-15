@@ -153,9 +153,9 @@ void draw()
    addEnemy(a%3); 
   }
   if(isHit(x1,y1,50,50,x2,y2,30,30)==true){
-   if(hp+20>=200){
-   hp=200;
-   }else{
+    if(hp+20>=200){
+    hp=200;
+    }else{
     hp+=20;
     }
     x2=floor(random(3,300));
@@ -165,7 +165,7 @@ void draw()
   fill(255);
   text("Score:"+score,10,470);
   for(i=0;i<8;i++){
-  if(isHit(x1,y1,50,50,enemyX[i],enemyY[i],60,60)==true){
+  if((isHit(x1,y1,50,50,enemyX[i],enemyY[i],60,60)==true)||(x1>enemyX[i]&&x1<enemyX[i]+60&&y1+25>enemyY[i]&&y1+25<enemyY[i]+60)){
     hp-=40;
     xi[i]=enemyX[i];
     yi[i]=enemyY[i];
@@ -205,23 +205,30 @@ void draw()
     e[j][i]=closestEnemy(xs[j],ys[j],enemyX[i],enemyY[i]); 
    }
   }
-
+  for(j=0;j<5;j++){
+   for(i=0;i<8;i++){
+    for(int ii=0;ii<8;ii++){
+     for(int jj=0;jj<5;jj++){
+      if(e[j][i]<=e[jj][ii]){
+      if(enemyY[i]>ys[j]&&ys[j]!=500&&enemyY[i]>0){
+      down=true;
+      }else{
+       down=false; 
+      }
+      if(enemyY[i]<ys[j]&&ys[j]!=500&&enemyY[i]>0){
+      up=true;
+      }else{
+       up=false; 
+      }
+      }
+     }
+    }
+   }
   if(up==true){
     ys[j]-=2;
   }if(down==true){
     ys[j]+=2;
-  }
-  i=0;
-   for(int j=0;j<5;j++){
-   if(closestEnemy(xs[j],ys[j],enemyX[i],enemyY[i])>ys[j]&&ys[j]!=500&&enemyY[i]>0){
-    ys[j]++; 
-   }if(closestEnemy(xs[j],ys[j],enemyX[i],enemyY[i])<ys[j]&&ys[j]!=500&&enemyY[i]>0){
-    ys[j]--; 
-   }
-   if(xs[j]<enemyX[i]){
-     i++;
-   }
-  }
+  }}
   break;//........................................................................................
     case GAME_LOSE:
     image(end2Img,0,0);
@@ -377,9 +384,17 @@ void keyReleased() {
 }
 
 int closestEnemy(int xx1,int yy1,int xx2,int yy2){
-  if(xx1>xx2){
-   return  yy2;
+  if(xx1>=xx2){
+   if(yy1>=yy2){
+   return (xx1-xx2)*(xx1-xx2)+(yy1-yy2)*(yy1-yy2);
+   }else{
+   return  (xx1-xx2)*(xx1-xx2)+(yy2-yy1)*(yy2-yy1);
+   }
   }else{
-   return yy1; 
+    if(yy1>=yy2){
+   return (xx2-xx1)*(xx2-xx1)+(yy1-yy2)*(yy1-yy2);
+   }else{
+   return  (xx1-xx2)*(xx1-xx2)+(yy1-yy2)*(yy1-yy2);
+  }
   }
 }
